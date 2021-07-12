@@ -1,0 +1,80 @@
+datasource db {
+  provider = "postgresql"
+  url = env("DataBASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMING
+  COMPLETE
+}
+
+enum OrderType {
+  ADD__ON
+  BACK_ORDER
+  DELIVERY
+  PICK_UP_AND_COUNT
+  PRICE_QUOTE
+  SPECIAL
+  WILL_CALL
+}
+
+enum CreditApproval {
+  REGULAR
+  ACH
+  CHECK_FOR_MONEY
+  HOLD
+  CHECK_ON_DELIVERY
+}
+
+enum AdditionalChannels {
+  MESH_THREAD
+}
+
+enum ConfirmationMethod {
+  EMAIL
+  FAX
+}
+
+model User {
+  id                  Int       @default(autoincrement()) @id
+  email               String    @unique
+  password            String
+  tempPassword        String?
+  tempPasswordExpires DateTime?
+  verified            Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  firstName           String?
+  lastName            String?
+  settings            Json
+  orders              Order[]
+
+}
+
+model Order {
+  createdOn    DateTime  @default(now())
+  creator      User      @relation(fields: [creatorId], references: [id])
+  creatorId    Int
+  customerId   Int
+  customer     Customer  @relation(fields: [customerId], references: [id])
+  id           Int       @default(autoincrement()) @id
+  history      Json
+  isActive     Boolean   @default(true)
+  notes        String?
+  orderNumber  Int
+  orderStatus  OrderStatus
+  orderType    OrderType
+}
+
+model Customer {
+  id        Int     @default(autoincrement()) @id
+  name      String  
+  site      String?
+  PONumber  String?
+  orders    Order[]
+}

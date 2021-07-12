@@ -1,0 +1,69 @@
+scalar JSON
+scalar Date
+
+extend type Query {
+  getUsers: [User]!
+  getUser(id: Int!): GetUserResult!
+}
+
+extend type Mutation {
+  register(input: UserRegisterInput): RegisterResult
+  login(input: UserLoginInput): LoginResult
+}
+
+input UserInput {
+  email: String!
+  firstName: String
+  lastName: String
+}
+
+input UserRegisterInput {
+  email: String!
+  firstName: String
+  lastName: String
+}
+
+input UserLoginInput {
+  email: String!
+  password: String!
+}
+
+union GetUserResult = User | UserNotFoundError
+union LoginResult = AuthPayload | UserInvalidInputError
+# Register is different, because this is a managed login. Users can't sign up themselves
+union RegisterResult = RegisterUser | UserInvalidInputError
+
+type User {
+  id: ID!
+  email: String!
+  verified: Boolean!
+  createdAt: Date!
+  updatedAt: Date!
+  firstName: String
+  lastName: String
+  settings: JSON
+}
+type RegisterUser {
+  id: ID!
+  email: String!
+  tempPassword: String!
+  tempPasswordExpires: Date!
+  verified: Boolean!
+  createdAt: Date!
+  firstName: String
+  lastName: String
+}
+
+type UserNotFoundError {
+  message: String!
+}
+
+type UserInvalidInputError {
+  message: String!
+  field: String!
+}
+
+type AuthPayload {
+  token: String!
+  refresh: String!
+}
