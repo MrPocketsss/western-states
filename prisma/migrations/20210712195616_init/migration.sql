@@ -15,10 +15,15 @@ CREATE TYPE "ConfirmationMethod" AS ENUM ('EMAIL', 'FAX');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "email" TEXT NOT NULL,
-    "firstName" TEXT NOT NULL,
     "id" SERIAL NOT NULL,
-    "lastName" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "tempCode" TEXT,
+    "tempCodeExpires" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "firstName" TEXT,
+    "lastName" TEXT,
     "settings" JSONB NOT NULL,
 
     PRIMARY KEY ("id")
