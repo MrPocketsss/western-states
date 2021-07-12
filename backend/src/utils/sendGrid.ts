@@ -7,14 +7,6 @@ enum EmailType {
   register,
 }
 
-interface email {
-  to: string
-  from: string
-  subject: string
-  text?: string
-  html?: string
-}
-
 type EmailTypeStrings = keyof typeof EmailType
 
 export function sendMail({
