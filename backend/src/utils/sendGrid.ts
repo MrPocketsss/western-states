@@ -36,10 +36,10 @@ export function sendMail({
   if (emailKind === 'forgot') {
     ;(msg.subject = 'Forgotten Password'),
       (msg.text = `
-      It looks like you forgot your password! No problem, here's a temporary
-      password to get back into your account.\n\n
+      It looks like you forgot your password! No problem, Paste the below link
+      into a web browser and we'll get you sorted.\n\n
 
-      ${tempCode}\n\n
+      ${process.env.BASE_URL}/activate#${tempCode}\n\n
 
       This password expires in 24 hours, so be sure to use this quickly! When
       you log in, you'll be asked to update your password.\n\n
@@ -54,7 +54,7 @@ export function sendMail({
           temporary password to get back into your account.
         </p>
         <br/>
-        <span style="background-color: rgb(158, 158, 158); padding: 10px">${tempCode}</span>
+        <a href="${process.env.BASE_URL}/activate#${tempCode}">Activate your new account</a>
         <br />
         <br />
         <p>
@@ -72,10 +72,10 @@ export function sendMail({
     ;(msg.subject = 'Welcome to WSW Orders'),
       (msg.text = `
       It looks like you have been registered with WSW Orders! You can log in to
-      your account at https://wsw.cursedtale.com with the temporary password
-      below\n\n
+      your account by pasting the below link into a web browser and we'll get
+      you sorted.\n\n
 
-      ${tempCode}\n\n
+      ${process.env.BASE_URL}/activate#${tempCode}\n\n
 
       This password expires in 24 hours, so be sure to use this quickly! When
       you log in, you'll be asked to update your password.\n\n
@@ -86,13 +86,12 @@ export function sendMail({
       (msg.html = `
       <div>
         <p>
-        It looks like you have been registered with WSW Orders! You can log in
-        to your account at <a href="https://wsw.cursedtale.com">WSW Orders</a>
-        with the temporary password below:
+        It looks like you have been registered with WSW Orders! Finish the sign
+        in process by going to
+          <a href="${process.env.BASE_URL}/activate#${tempCode}">WSW Orders</a>
+        and creating your password.
         </p>
         <br/>
-        <span style="background-color: rgb(158, 158, 158); padding: 10px">${tempCode}</span>
-        <br />
         <br />
         <p>
           This password expires in 24 hours, so be sure to use this quickly!
