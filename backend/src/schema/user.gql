@@ -36,9 +36,10 @@ union RegisterResult = RegisterUser | UserInvalidInputError
 type User {
   id: ID!
   email: String!
-  verified: Boolean!
   createdAt: Date!
   updatedAt: Date!
+  tempCode: String
+  tempCodeExpires: Date
   firstName: String
   lastName: String
   settings: JSON
@@ -46,9 +47,6 @@ type User {
 type RegisterUser {
   id: ID!
   email: String!
-  tempPassword: String!
-  tempPasswordExpires: Date!
-  verified: Boolean!
   createdAt: Date!
   firstName: String
   lastName: String

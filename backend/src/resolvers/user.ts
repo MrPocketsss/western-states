@@ -99,8 +99,8 @@ export const register: Resolver<
   RequireFields<MutationRegisterArgs, never>
 > = async (_parent, args, context: Context, _info) => {
   const { email } = args.input
-  const tempPassword = cuid.slug()
-  const tempPasswordExpires = new Date(Date.now() + 3600 * 1000 * 24) // exires one day from creation
+  const tempCode = cuid()
+  const tempCodeExpires = new Date(Date.now() + 3600 * 1000 * 24) // exires one day from creation
 
   // make sure email is okay
   if (email.indexOf('@') < 0) {
@@ -116,9 +116,9 @@ export const register: Resolver<
     const user = await context.prisma.user.create({
       data: {
         email,
-        password: tempPassword,
-        tempPassword,
-        tempPasswordExpires,
+        password: '',
+        tempCode,
+        tempCodeExpires,
         firstName: args.input?.firstName,
         lastName: args.input?.lastName,
         settings: {
@@ -127,7 +127,7 @@ export const register: Resolver<
       },
     })
 
-    sendMail({ emailKind: 'register', to: email, tempPassword })
+    sendMail({ emailKind: 'register', to: email, tempCode })
 
     const userResult: RegisterUser = {
       ...RegisterUserObject,
