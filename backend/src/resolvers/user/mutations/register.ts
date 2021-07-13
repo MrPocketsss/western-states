@@ -32,7 +32,7 @@ export const register: Resolver<
   {},
   Context,
   RequireFields<MutationRegisterArgs, never>
-> = async (_parent, args, context: Context, _info) => {
+> = async (_parent, args, context, _info) => {
   const { email } = args.input
   const tempCode = cuid()
   const tempCodeExpires = new Date(Date.now() + 3600 * 1000 * 24) // exires one day from creation

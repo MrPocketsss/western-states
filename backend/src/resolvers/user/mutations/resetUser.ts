@@ -22,7 +22,7 @@ export const resetUser: Resolver<
   {},
   Context,
   RequireFields<MutationResetUserArgs, never>
-> = async (_parent, args, context: Context, _info) => {
+> = async (_parent, args, context, _info) => {
   const user = await context.prisma.user.findFirst({
     where: { tempCode: args.input.tempCode },
   })

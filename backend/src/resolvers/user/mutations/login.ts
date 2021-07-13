@@ -31,7 +31,7 @@ export const login: Resolver<
   {},
   Context,
   RequireFields<MutationLoginArgs, never>
-> = async (_parent, args, context: Context, _info) => {
+> = async (_parent, args, context, _info) => {
   const { email, password } = args.input
   const badLogin: UserInvalidInputError = {
     ...UserInvalidInput,

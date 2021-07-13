@@ -31,7 +31,7 @@ export const updateUser: Resolver<
   {},
   Context,
   RequireFields<MutationUpdateUserArgs, never>
-> = async (_parent, args, context: Context, _info) => {
+> = async (_parent, args, context, _info) => {
   const { id, newEmail, newPassword, newFirstName, newLastName, newSettings } =
     args.input
 
