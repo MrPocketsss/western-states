@@ -22,27 +22,27 @@ export const passwordTest = (password): boolean | InvalidInput => {
         field: 'password',
         message: 'Password must be eight characters or longer',
       }
-    if (!/^.*[a-z]$/.test(password))
+    if (!/[a-z]+/.test(password))
       return {
         ...UserInvalidInput,
         field: 'password',
         message:
           'Password must contain at least one lowercase alphabetical character',
       }
-    if (!/^.*[A-Z]$/.test(password))
+    if (!/[A-Z]+/.test(password))
       return {
         ...UserInvalidInput,
         field: 'password',
         message:
           'Password must contain at least one uppercase alphabetical character',
       }
-    if (!/^.*[0-9]$/.test(password))
+    if (!/[0-9]+/.test(password))
       return {
         ...UserInvalidInput,
         field: 'password',
         message: 'Password must contain at least one numeric character',
       }
-    if (!/^.*[!@#$%^&*.]$/.test(password))
+    if (!/[!@#$%^&*.]+/.test(password))
       return {
         ...UserInvalidInput,
         field: 'password',
