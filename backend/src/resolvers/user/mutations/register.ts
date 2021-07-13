@@ -72,13 +72,16 @@ export const register: Resolver<
 
     return userResult
   } catch (error) {
-    if (error.message.includes('unique')) {
-      const output: UserInvalidInputError = {
+    if (
+      error.message.includes(
+        'Unique constraint failed on the fields: (`email`)'
+      )
+    ) {
+      return {
         ...UserInvalidInput,
         field: 'email',
         message: 'That email address is already registered. Try again',
       }
-      return output
     }
   }
 }
