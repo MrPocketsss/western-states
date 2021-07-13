@@ -34,7 +34,7 @@ export const resetUser: Resolver<
       message: 'No user exists with that code!',
     }
   // if the code is no longer valid
-  if (user.tempCodeExpires.getTime() > Date.now())
+  if (Date.now() > user.tempCodeExpires.getTime())
     return {
       ...UserInvalidInput,
       field: 'code',
