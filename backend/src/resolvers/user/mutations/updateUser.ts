@@ -8,10 +8,11 @@ import { UserInvalidInput } from '../index'
 
 // generated types
 import {
+  Maybe,
   MutationUpdateUserArgs,
   RequireFields,
   Resolver,
-  ResolverTypeWrapper,
+  ResolversTypes,
   UpdateUserResultResolvers,
   User,
   UserInvalidInputError,
@@ -27,7 +28,7 @@ export const UpdateUserResult: UpdateUserResultResolvers<
 }
 
 export const updateUser: Resolver<
-  ResolverTypeWrapper<User> | ResolverTypeWrapper<UserInvalidInputError>,
+  Maybe<ResolversTypes['UpdateUserResult']>,
   {},
   Context,
   RequireFields<MutationUpdateUserArgs, never>

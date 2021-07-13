@@ -11,14 +11,14 @@ import { UserInvalidInput } from '../index'
 import {
   RequireFields,
   Resolver,
-  ResolverTypeWrapper,
-  UserInvalidInputError,
   AuthPayload,
   MutationResetUserArgs,
+  Maybe,
+  ResolversTypes,
 } from '../../../generated/graphql'
 
 export const resetUser: Resolver<
-  ResolverTypeWrapper<AuthPayload> | ResolverTypeWrapper<UserInvalidInputError>,
+  Maybe<ResolversTypes['LoginResult']>,
   {},
   Context,
   RequireFields<MutationResetUserArgs, never>

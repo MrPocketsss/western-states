@@ -9,12 +9,13 @@ import { RegisterUserObject, UserInvalidInput } from '../index'
 
 // generated types
 import {
+  Maybe,
   MutationRegisterArgs,
   RegisterResultResolvers,
   RegisterUser,
   RequireFields,
   Resolver,
-  ResolverTypeWrapper,
+  ResolversTypes,
   UserInvalidInputError,
 } from '../../../generated/graphql'
 
@@ -27,8 +28,7 @@ export const RegisterResult: RegisterResultResolvers<
 }
 
 export const register: Resolver<
-  | ResolverTypeWrapper<RegisterUser>
-  | ResolverTypeWrapper<UserInvalidInputError>,
+  Maybe<ResolversTypes['RegisterResult']>,
   {},
   Context,
   RequireFields<MutationRegisterArgs, never>
