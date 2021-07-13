@@ -1,1 +1,0 @@
-DATABASE_URL="postgresql://test_user:aberrant_mould@localhost:5432/test_db?schema=public"

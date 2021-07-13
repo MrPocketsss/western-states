@@ -47,7 +47,8 @@ input UserResetInput {
 
 union GetUserResult = User | UserNotFoundError
 union LoginResult = AuthPayload | UserInvalidInputError
-# Register is different, because this is a managed login. Users can't sign up themselves
+# Register is different, because this is a managed login. Users can't sign up
+# themselves
 union RegisterResult = RegisterUser | UserInvalidInputError
 union UpdateUserResult = User | UserInvalidInputError
 

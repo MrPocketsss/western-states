@@ -28,6 +28,7 @@ export const getUser: Resolver<
   Context,
   RequireFields<QueryGetUserArgs, 'id'>
 > = async (_parent, args, context, _info) => {
+  console.log("I'm getting the user id: ", context.userId)
   const user = await context.prisma.user.findUnique({
     where: {
       id: args.id,
