@@ -43,6 +43,8 @@ export type Mutation = {
   _empty?: Maybe<Scalars['String']>;
   register?: Maybe<RegisterResult>;
   login?: Maybe<LoginResult>;
+  updateUser?: Maybe<UpdateUserResult>;
+  resetUser?: Maybe<LoginResult>;
 };
 
 
@@ -53,6 +55,16 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   input?: Maybe<UserLoginInput>;
+};
+
+
+export type MutationUpdateUserArgs = {
+  input?: Maybe<UserUpdateInput>;
+};
+
+
+export type MutationResetUserArgs = {
+  input?: Maybe<UserResetInput>;
 };
 
 export type Query = {
@@ -77,6 +89,8 @@ export type RegisterUser = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
 };
+
+export type UpdateUserResult = User | UserInvalidInputError;
 
 
 export type User = {
@@ -118,6 +132,21 @@ export type UserRegisterInput = {
   email: Scalars['String'];
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
+};
+
+export type UserResetInput = {
+  tempCode?: Maybe<Scalars['String']>;
+  password?: Maybe<Scalars['String']>;
+};
+
+export type UserUpdateInput = {
+  id: Scalars['ID'];
+  tempCode?: Maybe<Scalars['String']>;
+  newEmail?: Maybe<Scalars['String']>;
+  newPassword?: Maybe<Scalars['String']>;
+  newFirstName?: Maybe<Scalars['String']>;
+  newLastName?: Maybe<Scalars['String']>;
+  newSettings?: Maybe<Scalars['JSON']>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -212,6 +241,7 @@ export type ResolversTypes = ResolversObject<{
   RegisterResult: ResolversTypes['RegisterUser'] | ResolversTypes['UserInvalidInputError'];
   RegisterUser: ResolverTypeWrapper<RegisterUser>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  UpdateUserResult: ResolversTypes['User'] | ResolversTypes['UserInvalidInputError'];
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   User: ResolverTypeWrapper<User>;
   UserInput: UserInput;
@@ -219,6 +249,8 @@ export type ResolversTypes = ResolversObject<{
   UserLoginInput: UserLoginInput;
   UserNotFoundError: ResolverTypeWrapper<UserNotFoundError>;
   UserRegisterInput: UserRegisterInput;
+  UserResetInput: UserResetInput;
+  UserUpdateInput: UserUpdateInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
@@ -236,6 +268,7 @@ export type ResolversParentTypes = ResolversObject<{
   RegisterResult: ResolversParentTypes['RegisterUser'] | ResolversParentTypes['UserInvalidInputError'];
   RegisterUser: RegisterUser;
   ID: Scalars['ID'];
+  UpdateUserResult: ResolversParentTypes['User'] | ResolversParentTypes['UserInvalidInputError'];
   Upload: Scalars['Upload'];
   User: User;
   UserInput: UserInput;
@@ -243,6 +276,8 @@ export type ResolversParentTypes = ResolversObject<{
   UserLoginInput: UserLoginInput;
   UserNotFoundError: UserNotFoundError;
   UserRegisterInput: UserRegisterInput;
+  UserResetInput: UserResetInput;
+  UserUpdateInput: UserUpdateInput;
   Boolean: Scalars['Boolean'];
 }>;
 
@@ -277,6 +312,8 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   register?: Resolver<Maybe<ResolversTypes['RegisterResult']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, never>>;
   login?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<MutationLoginArgs, never>>;
+  updateUser?: Resolver<Maybe<ResolversTypes['UpdateUserResult']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, never>>;
+  resetUser?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<MutationResetUserArgs, never>>;
 }>;
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
@@ -296,6 +333,10 @@ export type RegisterUserResolvers<ContextType = Context, ParentType extends Reso
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UpdateUserResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UpdateUserResult'] = ResolversParentTypes['UpdateUserResult']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'User' | 'UserInvalidInputError', ParentType, ContextType>;
 }>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -336,6 +377,7 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   Query?: QueryResolvers<ContextType>;
   RegisterResult?: RegisterResultResolvers<ContextType>;
   RegisterUser?: RegisterUserResolvers<ContextType>;
+  UpdateUserResult?: UpdateUserResultResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserInvalidInputError?: UserInvalidInputErrorResolvers<ContextType>;

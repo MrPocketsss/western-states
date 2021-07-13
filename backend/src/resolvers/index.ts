@@ -6,28 +6,16 @@ import { Resolvers } from '../generated/graphql'
 
 // import project files
 import { dateScalar } from '../utils/dateScalar'
-import {
-  GetUserResult,
-  getUser,
-  getUsers,
-  login,
-  LoginResult,
-  register,
-  RegisterResult,
-} from './user'
+import { userResolvers } from './user/index'
 
 export const resolvers: Resolvers = {
   JSON: GraphQLJSON,
   Date: dateScalar,
-  GetUserResult,
-  LoginResult,
-  RegisterResult,
+  ...userResolvers.resolverTypes,
   Query: {
-    getUser,
-    getUsers,
+    ...userResolvers.queries,
   },
   Mutation: {
-    register,
-    login,
+    ...userResolvers.mutations,
   },
 }
