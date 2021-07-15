@@ -2,53 +2,83 @@ scalar JSON
 scalar Date
 
 extend type Query {
-  getUsers: [User]!
+  "Retrieves a single user account."
   getUser(id: Int!): GetUserResult!
+  "Retrieves a list of user accounts."
+  getUsers: [User]!
 }
 
 extend type Mutation {
+  """
+  Registers a new user account. This API provides a managed user experience. So
+  users cannot register themselves. Once registered, an email will be
+  generated and sent to the user with a link that includes an activation code
+  """
   register(input: UserRegisterInput): RegisterResult
+  "Provides authenticated JWT Tokens to the user given appropriate credentials are provided"
   login(input: UserLoginInput): LoginResult
+  "Updates a user account's details"
   updateUser(input: UserUpdateInput): UpdateUserResult
+  """
+  An API endpoint to reset a user's password. This can happen if the user
+  forgot their password, this is a newly registered account, or an
+  administrator reset a user's password.
+  """
   resetUser(input: UserResetInput): LoginResult
 }
 
-input UserInput {
-  email: String!
-  firstName: String
-  lastName: String
-}
-
+"""
+Provides data to register a new user
+"""
 input UserRegisterInput {
+  "The new user's email address (must be unique)"
   email: String!
+  "The new user's first name"
   firstName: String
+  "The new user's last name"
   lastName: String
 }
 
+"""
+Provides data to authenticate a user
+"""
 input UserLoginInput {
+  "The user's email"
   email: String!
+  "The user's password"
   password: String!
 }
 
+"""
+Provides data to update an existing user account
+"""
 input UserUpdateInput {
+  "The id of the user to update (required)"
   id: ID!
-  tempCode: String
+  "Updating the user's email (optional)"
   newEmail: String
+  "Updating the user's password (optional)"
   newPassword: String
+  "Updating the user's first name (optional)"
   newFirstName: String
+  "Updating the user's last name (optional)"
   newLastName: String
+  "Updating the user's settings (optional)"
   newSettings: JSON
 }
 
+"""
+Provides data to reset a user's password.
+"""
 input UserResetInput {
+  "The temporary code provided in the url passed to the email"
   tempCode: String
+  "The password the user will update their account with"
   password: String
 }
 
 union GetUserResult = User | UserNotFoundError
 union LoginResult = AuthPayload | UserInvalidInputError
-# Register is different, because this is a managed login. Users can't sign up
-# themselves
 union RegisterResult = RegisterUser | UserInvalidInputError
 union UpdateUserResult = User | UserInvalidInputError
 

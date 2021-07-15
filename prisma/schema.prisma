@@ -7,6 +7,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum AdditionalChannels {
+  MESH_THREAD
+}
+
+enum ConfirmationMethod {
+  EMAIL
+  FAX
+}
+
+enum CreditApproval {
+  REGULAR
+  ACH
+  CHECK_FOR_MONEY
+  HOLD
+  CHECK_ON_DELIVERY
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMING
@@ -23,21 +40,19 @@ enum OrderType {
   WILL_CALL
 }
 
-enum CreditApproval {
-  REGULAR
-  ACH
-  CHECK_FOR_MONEY
-  HOLD
-  CHECK_ON_DELIVERY
+enum PermissionModel {
+  USER
+  ORDER
+  CUSTOMER
+  PERMISSION
+  ROLE
 }
 
-enum AdditionalChannels {
-  MESH_THREAD
-}
-
-enum ConfirmationMethod {
-  EMAIL
-  FAX
+enum PermissionVerb {
+  CREATE
+  READ
+  UPDATE
+  DELETE
 }
 
 model User {
@@ -51,6 +66,7 @@ model User {
   firstName       String?
   lastName        String?
   settings        Json
+  roles           Role[]
   orders          Order[]
 
 }
@@ -76,4 +92,19 @@ model Customer {
   site     String?
   PONumber String?
   orders   Order[]
+}
+
+model Permission {
+  id       Int             @id @default(autoincrement())
+  verb     PermissionVerb
+  resource PermissionModel
+  own      Boolean         @default(true)
+  roles    Role[]
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String
+  permissions Permission[]
+  users       User[]
 }

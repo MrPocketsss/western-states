@@ -1,0 +1,76 @@
+extend type Query {
+  getPermission(id: Int!): PermissionResult!
+  getPermissions: [Permission]!
+  getRole(id: Int!): RoleResult!
+  getRoles: [Role]!
+}
+
+extend type Mutation {
+  createPermission(input: CreatePermissionInput): PermissionResult!
+  updatePermission(input: UpdatePermissionInput): PermissionResult!
+  deletePermission(input: PermissionInput): PermissionResult!
+  createRole(input: CreateRoleInput): RoleResult!
+  updateRole(input: UpdateRoleInput): RoleResult!
+  deleteRole(input: RoleInput): RoleResult!
+}
+
+union PermissionResult = Permission | PermRoleNotFoundError
+union RoleResult = Role | PermRoleNotFoundError
+
+input CreatePermissionInput {
+  verb: PermissionVerb!
+  resource: PermissionModel!
+  own: Boolean
+}
+input UpdatePermissionInput {
+  id: Int!
+  verb: PermissionVerb
+  resource: PermissionModel
+  own: Boolean
+}
+input PermissionInput {
+  id: Int!
+}
+
+input CreateRoleInput {
+  name: String!
+}
+input UpdateRoleInput {
+  id: Int!
+  name: String
+  permissions: [Int!]
+}
+input RoleInput {
+  id: Int!
+}
+
+type Permission {
+  id: Int!
+  own: Boolean
+  resource: PermissionModel!
+  verb: PermissionVerb!
+  roles: [Role]
+}
+type Role {
+  id: Int!
+  name: String!
+  permissions: [Permission]
+}
+
+type PermRoleNotFoundError {
+  message: String!
+}
+
+enum PermissionModel {
+  USER
+  ORDER
+  CUSTOMER
+  PERMISSION
+  ROLE
+}
+enum PermissionVerb {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+}

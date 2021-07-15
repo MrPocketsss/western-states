@@ -16,10 +16,7 @@ export type Scalars = {
   Date: any;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
 };
-
 
 export type AuthPayload = {
   __typename?: 'AuthPayload';
@@ -27,10 +24,15 @@ export type AuthPayload = {
   refresh: Scalars['String'];
 };
 
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
-}
+export type CreatePermissionInput = {
+  verb: PermissionVerb;
+  resource: PermissionModel;
+  own?: Maybe<Scalars['Boolean']>;
+};
+
+export type CreateRoleInput = {
+  name: Scalars['String'];
+};
 
 
 export type GetUserResult = User | UserNotFoundError;
@@ -41,10 +43,58 @@ export type LoginResult = AuthPayload | UserInvalidInputError;
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  createPermission: PermissionResult;
+  updatePermission: PermissionResult;
+  deletePermission: PermissionResult;
+  createRole: RoleResult;
+  updateRole: RoleResult;
+  deleteRole: RoleResult;
+  /**
+   * Registers a new user account. This API provides a managed user experience. So
+   * users cannot register themselves. Once registered, an email will be
+   * generated and sent to the user with a link that includes an activation code
+   */
   register?: Maybe<RegisterResult>;
+  /** Provides authenticated JWT Tokens to the user given appropriate credentials are provided */
   login?: Maybe<LoginResult>;
+  /** Updates a user account's details */
   updateUser?: Maybe<UpdateUserResult>;
+  /**
+   * An API endpoint to reset a user's password. This can happen if the user
+   * forgot their password, this is a newly registered account, or an
+   * administrator reset a user's password.
+   */
   resetUser?: Maybe<LoginResult>;
+};
+
+
+export type MutationCreatePermissionArgs = {
+  input?: Maybe<CreatePermissionInput>;
+};
+
+
+export type MutationUpdatePermissionArgs = {
+  input?: Maybe<UpdatePermissionInput>;
+};
+
+
+export type MutationDeletePermissionArgs = {
+  input?: Maybe<PermissionInput>;
+};
+
+
+export type MutationCreateRoleArgs = {
+  input?: Maybe<CreateRoleInput>;
+};
+
+
+export type MutationUpdateRoleArgs = {
+  input?: Maybe<UpdateRoleInput>;
+};
+
+
+export type MutationDeleteRoleArgs = {
+  input?: Maybe<RoleInput>;
 };
 
 
@@ -67,11 +117,62 @@ export type MutationResetUserArgs = {
   input?: Maybe<UserResetInput>;
 };
 
+export type PermRoleNotFoundError = {
+  __typename?: 'PermRoleNotFoundError';
+  message: Scalars['String'];
+};
+
+export type Permission = {
+  __typename?: 'Permission';
+  id: Scalars['Int'];
+  own?: Maybe<Scalars['Boolean']>;
+  resource: PermissionModel;
+  verb: PermissionVerb;
+  roles?: Maybe<Array<Maybe<Role>>>;
+};
+
+export type PermissionInput = {
+  id: Scalars['Int'];
+};
+
+export enum PermissionModel {
+  User = 'USER',
+  Order = 'ORDER',
+  Customer = 'CUSTOMER',
+  Permission = 'PERMISSION',
+  Role = 'ROLE'
+}
+
+export type PermissionResult = Permission | PermRoleNotFoundError;
+
+export enum PermissionVerb {
+  Create = 'CREATE',
+  Read = 'READ',
+  Update = 'UPDATE',
+  Delete = 'DELETE'
+}
+
 export type Query = {
   __typename?: 'Query';
+  getPermission: PermissionResult;
+  getPermissions: Array<Maybe<Permission>>;
+  getRole: RoleResult;
+  getRoles: Array<Maybe<Role>>;
   _empty?: Maybe<Scalars['String']>;
-  getUsers: Array<Maybe<User>>;
+  /** Retrieves a single user account. */
   getUser: GetUserResult;
+  /** Retrieves a list of user accounts. */
+  getUsers: Array<Maybe<User>>;
+};
+
+
+export type QueryGetPermissionArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryGetRoleArgs = {
+  id: Scalars['Int'];
 };
 
 
@@ -90,8 +191,33 @@ export type RegisterUser = {
   lastName?: Maybe<Scalars['String']>;
 };
 
-export type UpdateUserResult = User | UserInvalidInputError;
+export type Role = {
+  __typename?: 'Role';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  permissions?: Maybe<Array<Maybe<Permission>>>;
+};
 
+export type RoleInput = {
+  id: Scalars['Int'];
+};
+
+export type RoleResult = Role | PermRoleNotFoundError;
+
+export type UpdatePermissionInput = {
+  id: Scalars['Int'];
+  verb?: Maybe<PermissionVerb>;
+  resource?: Maybe<PermissionModel>;
+  own?: Maybe<Scalars['Boolean']>;
+};
+
+export type UpdateRoleInput = {
+  id: Scalars['Int'];
+  name?: Maybe<Scalars['String']>;
+  permissions?: Maybe<Array<Scalars['Int']>>;
+};
+
+export type UpdateUserResult = User | UserInvalidInputError;
 
 export type User = {
   __typename?: 'User';
@@ -106,20 +232,17 @@ export type User = {
   settings?: Maybe<Scalars['JSON']>;
 };
 
-export type UserInput = {
-  email: Scalars['String'];
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-};
-
 export type UserInvalidInputError = {
   __typename?: 'UserInvalidInputError';
   message: Scalars['String'];
   field: Scalars['String'];
 };
 
+/** Provides data to authenticate a user */
 export type UserLoginInput = {
+  /** The user's email */
   email: Scalars['String'];
+  /** The user's password */
   password: Scalars['String'];
 };
 
@@ -128,24 +251,37 @@ export type UserNotFoundError = {
   message: Scalars['String'];
 };
 
+/** Provides data to register a new user */
 export type UserRegisterInput = {
+  /** The new user's email address (must be unique) */
   email: Scalars['String'];
+  /** The new user's first name */
   firstName?: Maybe<Scalars['String']>;
+  /** The new user's last name */
   lastName?: Maybe<Scalars['String']>;
 };
 
+/** Provides data to reset a user's password. */
 export type UserResetInput = {
+  /** The temporary code provided in the url passed to the email */
   tempCode?: Maybe<Scalars['String']>;
+  /** The password the user will update their account with */
   password?: Maybe<Scalars['String']>;
 };
 
+/** Provides data to update an existing user account */
 export type UserUpdateInput = {
+  /** The id of the user to update (required) */
   id: Scalars['ID'];
-  tempCode?: Maybe<Scalars['String']>;
+  /** Updating the user's email (optional) */
   newEmail?: Maybe<Scalars['String']>;
+  /** Updating the user's password (optional) */
   newPassword?: Maybe<Scalars['String']>;
+  /** Updating the user's first name (optional) */
   newFirstName?: Maybe<Scalars['String']>;
+  /** Updating the user's last name (optional) */
   newLastName?: Maybe<Scalars['String']>;
+  /** Updating the user's settings (optional) */
   newSettings?: Maybe<Scalars['JSON']>;
 };
 
@@ -230,61 +366,75 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  CacheControlScope: CacheControlScope;
+  CreatePermissionInput: CreatePermissionInput;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  CreateRoleInput: CreateRoleInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   GetUserResult: ResolversTypes['User'] | ResolversTypes['UserNotFoundError'];
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   LoginResult: ResolversTypes['AuthPayload'] | ResolversTypes['UserInvalidInputError'];
   Mutation: ResolverTypeWrapper<{}>;
-  Query: ResolverTypeWrapper<{}>;
+  PermRoleNotFoundError: ResolverTypeWrapper<PermRoleNotFoundError>;
+  Permission: ResolverTypeWrapper<Permission>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  PermissionInput: PermissionInput;
+  PermissionModel: PermissionModel;
+  PermissionResult: ResolversTypes['Permission'] | ResolversTypes['PermRoleNotFoundError'];
+  PermissionVerb: PermissionVerb;
+  Query: ResolverTypeWrapper<{}>;
   RegisterResult: ResolversTypes['RegisterUser'] | ResolversTypes['UserInvalidInputError'];
   RegisterUser: ResolverTypeWrapper<RegisterUser>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  Role: ResolverTypeWrapper<Role>;
+  RoleInput: RoleInput;
+  RoleResult: ResolversTypes['Role'] | ResolversTypes['PermRoleNotFoundError'];
+  UpdatePermissionInput: UpdatePermissionInput;
+  UpdateRoleInput: UpdateRoleInput;
   UpdateUserResult: ResolversTypes['User'] | ResolversTypes['UserInvalidInputError'];
-  Upload: ResolverTypeWrapper<Scalars['Upload']>;
   User: ResolverTypeWrapper<User>;
-  UserInput: UserInput;
   UserInvalidInputError: ResolverTypeWrapper<UserInvalidInputError>;
   UserLoginInput: UserLoginInput;
   UserNotFoundError: ResolverTypeWrapper<UserNotFoundError>;
   UserRegisterInput: UserRegisterInput;
   UserResetInput: UserResetInput;
   UserUpdateInput: UserUpdateInput;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   AuthPayload: AuthPayload;
   String: Scalars['String'];
+  CreatePermissionInput: CreatePermissionInput;
+  Boolean: Scalars['Boolean'];
+  CreateRoleInput: CreateRoleInput;
   Date: Scalars['Date'];
   GetUserResult: ResolversParentTypes['User'] | ResolversParentTypes['UserNotFoundError'];
   JSON: Scalars['JSON'];
   LoginResult: ResolversParentTypes['AuthPayload'] | ResolversParentTypes['UserInvalidInputError'];
   Mutation: {};
-  Query: {};
+  PermRoleNotFoundError: PermRoleNotFoundError;
+  Permission: Permission;
   Int: Scalars['Int'];
+  PermissionInput: PermissionInput;
+  PermissionResult: ResolversParentTypes['Permission'] | ResolversParentTypes['PermRoleNotFoundError'];
+  Query: {};
   RegisterResult: ResolversParentTypes['RegisterUser'] | ResolversParentTypes['UserInvalidInputError'];
   RegisterUser: RegisterUser;
   ID: Scalars['ID'];
+  Role: Role;
+  RoleInput: RoleInput;
+  RoleResult: ResolversParentTypes['Role'] | ResolversParentTypes['PermRoleNotFoundError'];
+  UpdatePermissionInput: UpdatePermissionInput;
+  UpdateRoleInput: UpdateRoleInput;
   UpdateUserResult: ResolversParentTypes['User'] | ResolversParentTypes['UserInvalidInputError'];
-  Upload: Scalars['Upload'];
   User: User;
-  UserInput: UserInput;
   UserInvalidInputError: UserInvalidInputError;
   UserLoginInput: UserLoginInput;
   UserNotFoundError: UserNotFoundError;
   UserRegisterInput: UserRegisterInput;
   UserResetInput: UserResetInput;
   UserUpdateInput: UserUpdateInput;
-  Boolean: Scalars['Boolean'];
 }>;
-
-export type CacheControlDirectiveArgs = {   maxAge?: Maybe<Scalars['Int']>;
-  scope?: Maybe<CacheControlScope>; };
-
-export type CacheControlDirectiveResolver<Result, Parent, ContextType = Context, Args = CacheControlDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type AuthPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = ResolversObject<{
   token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -310,16 +460,44 @@ export type LoginResultResolvers<ContextType = Context, ParentType extends Resol
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createPermission?: Resolver<ResolversTypes['PermissionResult'], ParentType, ContextType, RequireFields<MutationCreatePermissionArgs, never>>;
+  updatePermission?: Resolver<ResolversTypes['PermissionResult'], ParentType, ContextType, RequireFields<MutationUpdatePermissionArgs, never>>;
+  deletePermission?: Resolver<ResolversTypes['PermissionResult'], ParentType, ContextType, RequireFields<MutationDeletePermissionArgs, never>>;
+  createRole?: Resolver<ResolversTypes['RoleResult'], ParentType, ContextType, RequireFields<MutationCreateRoleArgs, never>>;
+  updateRole?: Resolver<ResolversTypes['RoleResult'], ParentType, ContextType, RequireFields<MutationUpdateRoleArgs, never>>;
+  deleteRole?: Resolver<ResolversTypes['RoleResult'], ParentType, ContextType, RequireFields<MutationDeleteRoleArgs, never>>;
   register?: Resolver<Maybe<ResolversTypes['RegisterResult']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, never>>;
   login?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<MutationLoginArgs, never>>;
   updateUser?: Resolver<Maybe<ResolversTypes['UpdateUserResult']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, never>>;
   resetUser?: Resolver<Maybe<ResolversTypes['LoginResult']>, ParentType, ContextType, RequireFields<MutationResetUserArgs, never>>;
 }>;
 
+export type PermRoleNotFoundErrorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PermRoleNotFoundError'] = ResolversParentTypes['PermRoleNotFoundError']> = ResolversObject<{
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PermissionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Permission'] = ResolversParentTypes['Permission']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  own?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  resource?: Resolver<ResolversTypes['PermissionModel'], ParentType, ContextType>;
+  verb?: Resolver<ResolversTypes['PermissionVerb'], ParentType, ContextType>;
+  roles?: Resolver<Maybe<Array<Maybe<ResolversTypes['Role']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PermissionResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PermissionResult'] = ResolversParentTypes['PermissionResult']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Permission' | 'PermRoleNotFoundError', ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  getPermission?: Resolver<ResolversTypes['PermissionResult'], ParentType, ContextType, RequireFields<QueryGetPermissionArgs, 'id'>>;
+  getPermissions?: Resolver<Array<Maybe<ResolversTypes['Permission']>>, ParentType, ContextType>;
+  getRole?: Resolver<ResolversTypes['RoleResult'], ParentType, ContextType, RequireFields<QueryGetRoleArgs, 'id'>>;
+  getRoles?: Resolver<Array<Maybe<ResolversTypes['Role']>>, ParentType, ContextType>;
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  getUsers?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
   getUser?: Resolver<ResolversTypes['GetUserResult'], ParentType, ContextType, RequireFields<QueryGetUserArgs, 'id'>>;
+  getUsers?: Resolver<Array<Maybe<ResolversTypes['User']>>, ParentType, ContextType>;
 }>;
 
 export type RegisterResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RegisterResult'] = ResolversParentTypes['RegisterResult']> = ResolversObject<{
@@ -335,13 +513,20 @@ export type RegisterUserResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type RoleResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Role'] = ResolversParentTypes['Role']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  permissions?: Resolver<Maybe<Array<Maybe<ResolversTypes['Permission']>>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type RoleResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RoleResult'] = ResolversParentTypes['RoleResult']> = ResolversObject<{
+  __resolveType: TypeResolveFn<'Role' | 'PermRoleNotFoundError', ParentType, ContextType>;
+}>;
+
 export type UpdateUserResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['UpdateUserResult'] = ResolversParentTypes['UpdateUserResult']> = ResolversObject<{
   __resolveType: TypeResolveFn<'User' | 'UserInvalidInputError', ParentType, ContextType>;
 }>;
-
-export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
-  name: 'Upload';
-}
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -374,11 +559,15 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   JSON?: GraphQLScalarType;
   LoginResult?: LoginResultResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  PermRoleNotFoundError?: PermRoleNotFoundErrorResolvers<ContextType>;
+  Permission?: PermissionResolvers<ContextType>;
+  PermissionResult?: PermissionResultResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   RegisterResult?: RegisterResultResolvers<ContextType>;
   RegisterUser?: RegisterUserResolvers<ContextType>;
+  Role?: RoleResolvers<ContextType>;
+  RoleResult?: RoleResultResolvers<ContextType>;
   UpdateUserResult?: UpdateUserResultResolvers<ContextType>;
-  Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   UserInvalidInputError?: UserInvalidInputErrorResolvers<ContextType>;
   UserNotFoundError?: UserNotFoundErrorResolvers<ContextType>;
@@ -390,13 +579,3 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>;
-export type DirectiveResolvers<ContextType = Context> = ResolversObject<{
-  cacheControl?: CacheControlDirectiveResolver<any, any, ContextType>;
-}>;
-
-
-/**
- * @deprecated
- * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
- */
-export type IDirectiveResolvers<ContextType = Context> = DirectiveResolvers<ContextType>;
