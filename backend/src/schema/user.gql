@@ -54,7 +54,7 @@ Provides data to update an existing user account
 """
 input UserUpdateInput {
   "The id of the user to update (required)"
-  id: ID!
+  id: Int!
   "Updating the user's email (optional)"
   newEmail: String
   "Updating the user's password (optional)"
@@ -65,6 +65,8 @@ input UserUpdateInput {
   newLastName: String
   "Updating the user's settings (optional)"
   newSettings: JSON
+  "Updating the user's roles (optional)"
+  newRoles: [Int!]
 }
 
 """
@@ -83,7 +85,7 @@ union RegisterResult = RegisterUser | UserInvalidInputError
 union UpdateUserResult = User | UserInvalidInputError
 
 type User {
-  id: ID!
+  id: Int!
   email: String!
   createdAt: Date!
   updatedAt: Date!
@@ -92,9 +94,10 @@ type User {
   firstName: String
   lastName: String
   settings: JSON
+  roles: [Role!]
 }
 type RegisterUser {
-  id: ID!
+  id: Int!
   email: String!
   createdAt: Date!
   firstName: String

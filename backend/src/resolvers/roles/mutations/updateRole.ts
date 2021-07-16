@@ -8,6 +8,11 @@ import {
   ResolversTypes,
 } from '../../../generated/graphql'
 
+interface Data {
+  name?: string
+  permissions?: any
+}
+
 export const updateRole: Resolver<
   ResolversTypes['RoleResult'],
   {},
@@ -16,25 +21,16 @@ export const updateRole: Resolver<
 > = async (_parent, args, context, _info) => {
   const { id, name, permissions } = args.input
 
-  const permissionSet = permissions.map((id) => ({ id }))
+  const updateData: Data = {}
+  if (name) updateData['name'] = name
+  if (permissions)
+    updateData['permissions'] = {
+      set: permissions.map((id) => ({ id })),
+    }
 
-  const oldRole: Role = await context.prisma.role.findFirst({
-    where: { id },
-    include: {
-      permissions: {
-        select: { id: true },
-      },
-    },
-  })
-
-  const newRole = await context.prisma.role.update({
-    where: { id },
-    data: {
-      name: name ? name : oldRole.name,
-      permissions: { connect: permissionSet },
-    },
+  return await context.prisma.role.update({
+    where: { id: args.input.id },
+    data: updateData,
     include: { permissions: true },
   })
-
-  return newRole
 }

@@ -1,9 +1,7 @@
 import { Context } from '../../../context'
 
 import {
-  MutationUpdatePermissionArgs,
-  Permission,
-  PermissionModel,
+  MutationupdatePermissionArgs,
   RequireFields,
   Resolver,
   ResolversTypes,
@@ -13,23 +11,10 @@ export const updatePermission: Resolver<
   ResolversTypes['PermissionResult'],
   {},
   Context,
-  RequireFields<MutationUpdatePermissionArgs, never>
+  RequireFields<MutationupdatePermissionArgs, never>
 > = async (_parent, args, context, _info) => {
-  const { id, verb, resource, own } = args.input
-
-  const oldPermission: Permission = await context.prisma.permission.findFirst({
-    where: { id },
-    include: { roles: true },
+  return await context.prisma.permission.update({
+    where: { id: args.input.id },
+    data: {},
   })
-
-  const newPermission: Permission = await context.prisma.permission.update({
-    where: { id },
-    data: {
-      verb: verb ? verb : oldPermission.verb,
-      resource: resource ? resource : oldPermission.resource,
-      own: own ? own : oldPermission.own,
-    },
-  })
-
-  return newPermission
 }

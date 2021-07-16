@@ -184,7 +184,7 @@ export type RegisterResult = RegisterUser | UserInvalidInputError;
 
 export type RegisterUser = {
   __typename?: 'RegisterUser';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   email: Scalars['String'];
   createdAt: Scalars['Date'];
   firstName?: Maybe<Scalars['String']>;
@@ -221,7 +221,7 @@ export type UpdateUserResult = User | UserInvalidInputError;
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   email: Scalars['String'];
   createdAt: Scalars['Date'];
   updatedAt: Scalars['Date'];
@@ -230,6 +230,7 @@ export type User = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   settings?: Maybe<Scalars['JSON']>;
+  roles?: Maybe<Array<Role>>;
 };
 
 export type UserInvalidInputError = {
@@ -272,7 +273,7 @@ export type UserResetInput = {
 /** Provides data to update an existing user account */
 export type UserUpdateInput = {
   /** The id of the user to update (required) */
-  id: Scalars['ID'];
+  id: Scalars['Int'];
   /** Updating the user's email (optional) */
   newEmail?: Maybe<Scalars['String']>;
   /** Updating the user's password (optional) */
@@ -283,6 +284,8 @@ export type UserUpdateInput = {
   newLastName?: Maybe<Scalars['String']>;
   /** Updating the user's settings (optional) */
   newSettings?: Maybe<Scalars['JSON']>;
+  /** Updating the user's roles (optional) */
+  newRoles?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -384,7 +387,6 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   RegisterResult: ResolversTypes['RegisterUser'] | ResolversTypes['UserInvalidInputError'];
   RegisterUser: ResolverTypeWrapper<RegisterUser>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   Role: ResolverTypeWrapper<Role>;
   RoleInput: RoleInput;
   RoleResult: ResolversTypes['Role'] | ResolversTypes['PermRoleNotFoundError'];
@@ -420,7 +422,6 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   RegisterResult: ResolversParentTypes['RegisterUser'] | ResolversParentTypes['UserInvalidInputError'];
   RegisterUser: RegisterUser;
-  ID: Scalars['ID'];
   Role: Role;
   RoleInput: RoleInput;
   RoleResult: ResolversParentTypes['Role'] | ResolversParentTypes['PermRoleNotFoundError'];
@@ -505,7 +506,7 @@ export type RegisterResultResolvers<ContextType = Context, ParentType extends Re
 }>;
 
 export type RegisterUserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['RegisterUser'] = ResolversParentTypes['RegisterUser']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -529,7 +530,7 @@ export type UpdateUserResultResolvers<ContextType = Context, ParentType extends 
 }>;
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -538,6 +539,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   settings?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>;
+  roles?: Resolver<Maybe<Array<ResolversTypes['Role']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

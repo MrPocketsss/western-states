@@ -7,7 +7,10 @@ import { resetUser } from './mutations/resetUser'
 import { UpdateUserResult, updateUser } from './mutations/updateUser'
 
 // generated types
-import { UserNotFoundError } from '../../generated/graphql'
+import {
+  UserInvalidInputError,
+  UserNotFoundError,
+} from '../../generated/graphql'
 
 export const userResolvers = {
   resolverTypes: {
@@ -39,8 +42,8 @@ export const UserNotFound: UserNotFoundError = {
   message: "Sorry, that user does't exist",
 }
 
-export const UserInvalidInput = {
-  __typeName: 'UserInvalidInputError',
+export const UserInvalidInput: UserInvalidInputError = {
+  __typename: 'UserInvalidInputError',
   message: '',
   field: '',
 }
