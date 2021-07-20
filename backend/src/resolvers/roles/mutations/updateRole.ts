@@ -31,6 +31,5 @@ export const updateRole: Resolver<
   return await context.prisma.role.update({
     where: { id: args.input.id },
     data: updateData,
-    include: { permissions: true },
   })
 }

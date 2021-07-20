@@ -1,7 +1,7 @@
 import { Context } from '../../../context'
 
 import {
-  MutationupdatePermissionArgs,
+  MutationUpdatePermissionArgs,
   RequireFields,
   Resolver,
   ResolversTypes,
@@ -11,7 +11,7 @@ export const updatePermission: Resolver<
   ResolversTypes['PermissionResult'],
   {},
   Context,
-  RequireFields<MutationupdatePermissionArgs, never>
+  RequireFields<MutationUpdatePermissionArgs, never>
 > = async (_parent, args, context, _info) => {
   return await context.prisma.permission.update({
     where: { id: args.input.id },
