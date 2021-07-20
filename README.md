@@ -1,3 +1,13 @@
+# To build
+
+`npm install` or `yarn` to add packages.
+
+This package uses a postgres database hosted locally in docker. To maintain the data, change the DATABASE_URL in the string as appropriate.
+
+`yarn dev` to start dev server
+
+`yarn generate` in another terminal to create generated types from schema
+
 # Next.js + Tailwind CSS Example
 
 This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v2.2)](https://blog.tailwindcss.com/tailwindcss-2-2) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
